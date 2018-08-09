@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rupeng.mapper.SegmentMapper">
+	<insert id="insert" parameterType="Segment">
+	   insert into T_Segments(name,chapterId,seqNum,description,videoCode) 
+	   values(#{name},#{chapterId},#{seqNum},#{description},#{videoCode})
+	</insert>
+	<delete id="delete" parameterType="long">
+		update T_Segments set isDeleted=true
+		where id=#{id}
+	</delete>
+	<update id="update" parameterType="Segment">
+		update T_Segments set name=#{name},chapterId=#{chapterId},seqNum=#{seqNum},description=#{description},videoCode=#{videoCode}
+		where id=#{id}
+	</update>
+	<select id="select" parameterType="Segment" resultType="Segment">
+		select * from T_Segments
+		where isDeleted=false
+			<if test="id!=null"> and id=#{id}</if>
+			<if test="name!=null"> and name=#{name}</if>
+			<if test="chapterId!=null"> and chapterId=#{chapterId}</if>
+			<if test="seqNum!=null"> and seqNum=#{seqNum}</if>
+			<if test="description!=null"> and description like #{description}</if>
+			<if test="videoCode!=null"> and videoCode=#{videoCode}</if>
+			
+		
+	</select>
+</mapper>

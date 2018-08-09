@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rupeng.mapper.AdminUserRoleMapper">
+	<insert id="insert" parameterType="AdminUserRole">
+	   insert into T_AdminUserRoles(adminUserId,roleId) values(#{adminUserId},#{roleId})
+	</insert>
+	<delete id="delete" parameterType="long">
+		delete from T_AdminUserRoles
+		where id=#{id}
+	</delete>
+	<update id="update" parameterType="AdminUserRole">
+		update T_AdminUserRoles set adminUserId=#{adminUserId},roleId=#{roleId}
+		where id=#{id}
+	</update>
+	<select id="select" parameterType="AdminUserRole" resultType="AdminUserRole">
+		select * from T_AdminUserRoles
+		<where>
+			<if test="id!=null"> id=#{id}</if>
+			<if test="adminUserId!=null"> and adminUserId=#{adminUserId}</if>
+			<if test="roleId!=null"> and roleId=#{roleId}</if>
+		</where>
+	</select>
+	<delete id="deleteByFirstId" parameterType="long">
+	 delete from T_AdminUserRoles 
+	 where adminUserId=#{adminUserId}
+	</delete>
+	<delete id="deleteBySecondId" parameterType="long">
+	 delete from T_AdminUserRoles 
+	 where roleId=#{roleId}
+	</delete>
+	<select id="selectFirstListBySecondId" parameterType="long" resultType="AdminUser">
+		select a.* from T_AdminUserRoles ar left join T_AdminUsers a on ar.adminUserId=a.id
+		where a.isDeleted=false and ar.roleId=#{roleId}
+	</select>
+	<select id="selectSecondListByFirstId" parameterType="long" resultType="Role">
+		select r.* from T_AdminUserRoles ar left join T_Roles r on ar.roleId=r.id
+		where r.isDeleted=false and ar.adminUserId=#{adminUserId}
+	</select>
+	<select id="checkPermission" parameterType="map" resultType="int">
+		select count(*) from T_adminUserRoles ur 
+		left join T_Roles r on ur.roleId=r.id
+		left join T_rolepermissions rp on r.id=rp.roleId
+		left join T_permissions p on p.id=rp.permissionId
+		where ur.adminUserId=#{adminUserId}
+		and r.isDeleted=false
+		and p.isDeleted=false
+		and p.path=#{path}
+	</select>
+</mapper>
